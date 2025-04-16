@@ -16,13 +16,6 @@ public class JournalEntryController {
     @Autowired
     JournalEntryService journalEntryService;
 
-    private Map<String, JournalEntry> journalEntryMap = new HashMap<>();
-
-//    @GetMapping()
-//    public List<JournalEntry> getAll(){
-//        return new ArrayList<>(journalEntryMap.values());
-//    }
-
     @PostMapping("/createEntry")
     public JournalEntry createEntry(@RequestBody JournalEntry myEntry){
         journalEntryService.createEntry(myEntry);
@@ -35,17 +28,24 @@ public class JournalEntryController {
 
     @GetMapping("id/{myId}")
     public Optional<JournalEntry> getJournalEntryById(@PathVariable ObjectId myId){
-        return journalEntryService.findEntryById(myId);
+        return Optional.ofNullable(journalEntryService.findEntryById(myId).orElse(null));
     }
 
     @DeleteMapping("id/{myId}")
-    public JournalEntry deleteJournalEntryById(@PathVariable ObjectId myId){
-        return journalEntryMap.remove(myId);
+    public boolean deleteJournalEntryById(@PathVariable ObjectId myId){
+         journalEntryService.deleteById(myId);
+         return true;
     }
 
     @PutMapping("id/{myId}")
-    public JournalEntry updateJournalEntryById(@PathVariable ObjectId myId, @RequestBody JournalEntry myEntry){
-        return journalEntryMap.put(null,myEntry);
+    public JournalEntry updateJournalEntryById(@PathVariable ObjectId id, @RequestBody JournalEntry newEntry){
+        JournalEntry oldEntry = journalEntryService.findEntryById(id).orElse(null);
+            if (oldEntry !=null){
+                oldEntry.setTitle(newEntry.getTitle() != null && newEntry.getTitle().isEmpty() ? newEntry.getTitle() : oldEntry.getTitle());
+                oldEntry.setContent(newEntry.getContent() !=null && newEntry.getContent().isEmpty() ? newEntry.getContent() : oldEntry.getContent());
+            journalEntryService.createEntry(oldEntry);
+            }
+            return oldEntry;
     }
 }
 
