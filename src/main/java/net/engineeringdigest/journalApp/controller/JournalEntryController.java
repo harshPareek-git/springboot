@@ -10,7 +10,7 @@ import java.util.*;
 
 
 @RestController
-@RequestMapping("journal")
+//@RequestMapping("journal")
 public class JournalEntryController {
 
     @Autowired
@@ -22,14 +22,15 @@ public class JournalEntryController {
         return myEntry;
     }
     @GetMapping("/getAllEntries")
-    public List<JournalEntry> getAllEntrires(){
+    public List<JournalEntry> getAllEntries(){
        return journalEntryService.getAllEntries();
     }
 
     @GetMapping("id/{myId}")
     public Optional<JournalEntry> getJournalEntryById(@PathVariable ObjectId myId){
-        return Optional.ofNullable(journalEntryService.findEntryById(myId).orElse(null));
+        return journalEntryService.findEntryById(myId);
     }
+
 
     @DeleteMapping("id/{myId}")
     public boolean deleteJournalEntryById(@PathVariable ObjectId myId){
@@ -37,16 +38,18 @@ public class JournalEntryController {
          return true;
     }
 
-    @PutMapping("id/{myId}")
-    public JournalEntry updateJournalEntryById(@PathVariable ObjectId id, @RequestBody JournalEntry newEntry){
-        JournalEntry oldEntry = journalEntryService.findEntryById(id).orElse(null);
+        @PutMapping("id/{myId}")
+    public JournalEntry updateJournalEntryById(@PathVariable ObjectId myId, @RequestBody JournalEntry newEntry){
+        JournalEntry oldEntry = journalEntryService.findEntryById(myId).orElse(null);
             if (oldEntry !=null){
-                oldEntry.setTitle(newEntry.getTitle() != null && newEntry.getTitle().isEmpty() ? newEntry.getTitle() : oldEntry.getTitle());
-                oldEntry.setContent(newEntry.getContent() !=null && newEntry.getContent().isEmpty() ? newEntry.getContent() : oldEntry.getContent());
+                oldEntry.setTitle(newEntry.getTitle() != null && !newEntry.getTitle().isEmpty() ? newEntry.getTitle() : oldEntry.getTitle());
+                oldEntry.setContent(newEntry.getContent() !=null && !newEntry.getContent().isEmpty() ? newEntry.getContent() : oldEntry.getContent());
             journalEntryService.createEntry(oldEntry);
             }
             return oldEntry;
     }
+
+
 }
 
 
