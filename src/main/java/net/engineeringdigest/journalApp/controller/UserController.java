@@ -1,7 +1,6 @@
 package net.engineeringdigest.journalApp.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import net.engineeringdigest.journalApp.entity.JournalEntry;
 import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.service.UserService;
 import org.bson.types.ObjectId;
@@ -26,7 +25,7 @@ public class UserController {
     @PostMapping("/createUser")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
-            userService.createEntry(user);
+            userService.saveEntry(user);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             log.error("Exception ", e);
@@ -55,8 +54,8 @@ public class UserController {
 
 
     @DeleteMapping("id/{myId}")
-    public ResponseEntity<User> deleteUserById(@PathVariable ObjectId myId) {
-          userService.deleteById(myId);
+    public ResponseEntity<User> deleteUserById(@PathVariable ObjectId myId,@PathVariable String userName) {
+          userService.deleteById(myId, userName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -66,7 +65,7 @@ public class UserController {
         if (userInDB!=null){
             userInDB.setUserName(user.getUserName());
             userInDB.setPassword(user.getPassword());
-            userService.createEntry(userInDB);
+            userService.saveEntry(userInDB);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

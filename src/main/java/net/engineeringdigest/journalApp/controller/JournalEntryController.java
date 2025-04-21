@@ -39,12 +39,12 @@ public class JournalEntryController {
 
     }
 
-    @GetMapping("/getAllEntries")
-    public ResponseEntity<JournalEntry> getAllJournalEntriesOfUser(@PathVariable String userName) {
+    @GetMapping("/getAllEntries/{userName}")
+    public ResponseEntity<?> getAllJournalEntriesOfUser(@PathVariable String userName) {
         User user = userService.findByUserName(userName);
         List<JournalEntry> allEntries = user.getJournalEntries();
         if (allEntries != null && !allEntries.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(allEntries,HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -60,25 +60,32 @@ public class JournalEntryController {
     }
 
 
-    @DeleteMapping("id/{myId}")
-    public ResponseEntity<?> deleteJournalEntryById(@PathVariable ObjectId myId) {
-        journalEntryService.deleteById(myId);
+    @DeleteMapping("id/{userName}/{myId}")
+    public ResponseEntity<?> deleteJournalEntryById(@PathVariable ObjectId myId,@PathVariable String userName) {
+        journalEntryService.deleteById(myId,userName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("id/{myId}")
-    public ResponseEntity<?> updateJournalEntryById(@PathVariable ObjectId myId, @RequestBody JournalEntry newEntry) {
+
+    @PutMapping("id/{userName}/{myId}")
+    public ResponseEntity<?> updateJournalEntryById(
+            @PathVariable ObjectId myId,
+            @RequestBody JournalEntry newEntry,
+            @PathVariable String userName) {
         JournalEntry oldEntry = journalEntryService.findEntryById(myId).orElse(null);
         if (oldEntry != null) {
-//            oldEntry.setTitle(newEntry.getTitle() != null && !newEntry.getTitle().isEmpty() ? newEntry.getTitle() : oldEntry.getTitle());
-//            oldEntry.setContent(newEntry.getContent() != null && !newEntry.getContent().isEmpty() ? newEntry.getContent() : oldEntry.getContent());
-//            journalEntryService.createEntry(oldEntry);
-//            return new ResponseEntity<>(HttpStatus.OK);
+            oldEntry.setTitle(newEntry.getTitle() != null && !newEntry.getTitle().isEmpty() ? newEntry.getTitle() : oldEntry.getTitle());
+            oldEntry.setContent(newEntry.getContent() != null && !newEntry.getContent().isEmpty() ? newEntry.getContent() : oldEntry.getContent());
+            journalEntryService.createEntry(oldEntry);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 
 }
+
+
+
 
 
