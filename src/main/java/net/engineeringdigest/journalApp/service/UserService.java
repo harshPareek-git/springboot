@@ -19,9 +19,12 @@ public class UserService  {
     @Autowired
     private UserRepository userRepository;
 
-    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public void saveEntry(User user){
+//    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//
+    public void saveUser(User user){
         userRepository.save(user);
     }
 
@@ -39,7 +42,6 @@ public class UserService  {
     }
 
     public void deleteById(ObjectId id, String userName){
-
         userRepository.deleteById(id);
     }
 

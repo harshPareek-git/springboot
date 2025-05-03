@@ -22,15 +22,16 @@ public class JournalEntryService {
     @Autowired
     private UserService userService;
 
-    public void createEntry(JournalEntry journalEntry, String userName){
+    @Transactional
+    public void saveEntry(JournalEntry journalEntry, String userName){
         User user = userService.findByUserName(userName);
         journalEntry.setDate(LocalDateTime.now());
         JournalEntry saved = journalEntryRepository.save(journalEntry);
         user.getJournalEntries().add(saved);
-        userService.saveEntry(user);
+        userService.saveUser(user);
     }
 
-    public void createEntry(JournalEntry journalEntry){
+    public void saveEntry(JournalEntry journalEntry){
         journalEntryRepository.save(journalEntry);
     }
 
@@ -42,16 +43,20 @@ public class JournalEntryService {
     }
 
     @Transactional
-    public void deleteById(ObjectId id,String userName){
+    public boolean deleteById(ObjectId id,String userName){
+        boolean removed = false;
         try {
             User user = userService.findByUserName(userName);
-            user.getJournalEntries().removeIf(x -> x.getId().equals(id));
-            userService.saveEntry(user);
-            journalEntryRepository.deleteById(String.valueOf(id));
+             removed = user.getJournalEntries().removeIf(x -> x.getId().equals(id));
+            if(removed){
+                userService.saveUser(user);
+                journalEntryRepository.deleteById(String.valueOf(id));
+            }
         }catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException("Exception while deleting JournalEntry",e);
         }
+        return removed;
     }
 
 }
