@@ -40,7 +40,7 @@ public ResponseEntity<User> registerUser(@RequestBody User user) {
         // Check if user already exists
         if (userService.findByUserName(user.getUserName()) != null) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        } 
         userService.saveNewUser(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     } catch (Exception e) {
