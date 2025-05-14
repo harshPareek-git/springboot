@@ -20,4 +20,8 @@ logging:
       engineeringdigest:
         journalApp: DEBUG
 
+weather:
+  api:
+    key: 27d76d12248d2b44cb354bfe70edac53
+
 #    context-path: /journal

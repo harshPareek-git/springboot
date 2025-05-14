@@ -6,3 +6,6 @@ curl -X POST -H "Content-Type: application/json" \
 # Try to authenticate
 curl -v -H "Authorization: Basic $(echo -n 'testuser:testpass' | base64)" \
   http://localhost:8080/journal
+
+ # Dispatcher servlet
+ # Client Request → DispatcherServlet → HandlerMapping → Controller → ViewResolver → View → Response to Client
