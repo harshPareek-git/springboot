@@ -1,0 +1,11 @@
+# Register a new user
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"userName":"testuser","password":"testpass"}' \
+  http://localhost:8080/user/register
+
+# Try to authenticate
+curl -v -H "Authorization: Basic $(echo -n 'testuser:testpass' | base64)" \
+  http://localhost:8080/journal
+
+ # Dispatcher servlet
+ # Client Request → DispatcherServlet → HandlerMapping → Controller → ViewResolver → View → Response to Client
